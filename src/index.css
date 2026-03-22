@@ -1,0 +1,184 @@
+@import "tailwindcss";
+
+/* ─── IJG Design System ─────────────────────────────────────── */
+:root {
+  --ijg-black:   #07090F;
+  --ijg-navy:    #0D1117;
+  --ijg-card:    #111827;
+  --ijg-border:  #1F2937;
+  --ijg-gold:    #C9A84C;
+  --ijg-gold-lt: #E2C97E;
+  --ijg-white:   #F5F0E8;
+  --ijg-muted:   #9CA3AF;
+  --ijg-green:   #10B981;
+  --ijg-red:     #EF4444;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background-color: var(--ijg-black);
+  color: var(--ijg-white);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-style: italic;
+  color: var(--ijg-white);
+  line-height: 1.2;
+  margin: 0;
+}
+
+p { margin: 0; }
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+
+#root { width: 100%; }
+
+.ijg-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .ijg-container { padding: 0 2rem; }
+}
+
+.section-label {
+  display: inline-block;
+  font-family: 'DM Sans', sans-serif;
+  font-style: normal;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ijg-gold);
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 4px;
+  padding: 0.2rem 0.6rem;
+}
+
+.ijg-card {
+  background: var(--ijg-card);
+  border: 1px solid var(--ijg-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.ijg-card:hover {
+  border-color: rgba(201,168,76,0.4);
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--ijg-gold);
+  color: #07090F;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  padding: 0.75rem 1.75rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  background: var(--ijg-gold-lt);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: var(--ijg-white);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 6px;
+  border: 1px solid rgba(245,240,232,0.25);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-outline:hover {
+  border-color: var(--ijg-gold);
+  color: var(--ijg-gold);
+}
+
+.btn-wa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #25D366;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-wa:hover { background: #1ebe5d; }
+
+.ijg-input {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--ijg-border);
+  border-radius: 8px;
+  color: var(--ijg-white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  min-height: 48px;
+  outline: none;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+
+.ijg-input:focus {
+  border-color: var(--ijg-gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+}
+
+.ijg-input::placeholder { color: var(--ijg-muted); }
+
+.gold-divider {
+  width: 48px;
+  height: 2px;
+  background: var(--ijg-gold);
+  margin: 1rem 0;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--ijg-navy); }
+::-webkit-scrollbar-thumb { background: var(--ijg-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ijg-gold); }

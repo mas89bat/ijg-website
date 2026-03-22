@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/language-context";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 import { Language, TRANSLATIONS, RESEARCH } from "@/lib/research-data";
 import type { Article } from "@/lib/research-data";
+import { X, Download, Loader2, BarChart3, FileText } from "lucide-react";
 import PortalSidebar from "./portal-sidebar";
 import PortalHeader from "./portal-header";
 import { HomeTab } from "./tabs/home-tab";
@@ -19,6 +20,210 @@ import { TradingTab } from "./tabs/trading-tab";
 import { AdvisoryTab } from "./tabs/advisory-tab";
 import { MyDocumentsTab } from "./tabs/my-documents-tab";
 import { ProfileTab } from "./tabs/profile-tab";
+
+function InfographicModal({ onClose, query, answer }: { onClose: () => void; query: string; answer: string }) {
+  const [generating, setGenerating] = useState(true);
+  const [imageData, setImageData] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/generate-infographic", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, answer }),
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || "Generation failed");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setImageData(`data:${data.mimeType};base64,${data.image}`);
+        setGenerating(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setGenerating(false);
+      });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleDownload = () => {
+    if (!imageData) return;
+    const link = document.createElement("a");
+    link.href = imageData;
+    link.download = `IJG_Infographic_${query.replace(/[^a-zA-Z0-9]/g, "_").slice(0, 40)}.png`;
+    link.click();
+  };
+
+  return (
+    <div
+      style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 300, padding: 20 }}
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{ background: "#0D0E16", borderRadius: 20, width: "min(90vw, 800px)", maxHeight: "90vh", border: "1px solid rgba(255,255,255,0.06)", position: "relative", display: "flex", flexDirection: "column", overflow: "hidden" }}
+      >
+        <div style={{ height: 3, background: "linear-gradient(90deg,#C49A2A,#D4A843)", position: "absolute", top: 0, left: 0, right: 0, borderRadius: "20px 20px 0 0" }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px 16px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <BarChart3 size={16} color="#C49A2A" />
+            <span style={{ fontSize: 13, fontWeight: 700, color: "#C49A2A", letterSpacing: "1px", textTransform: "uppercase" }}>Infographic Generation</span>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "#7A7680", cursor: "pointer" }}><X size={18} /></button>
+        </div>
+
+        <div style={{ flex: 1, overflowY: "auto", padding: "0 24px 24px" }}>
+          {generating && (
+            <div style={{ textAlign: "center", padding: "60px 0" }}>
+              <Loader2 size={32} color="#C49A2A" style={{ animation: "spin 1s linear infinite", marginBottom: 16 }} />
+              <p style={{ fontSize: 14, color: "#E8E4DD", fontWeight: 600, marginBottom: 6 }}>Generating 4K Infographic...</p>
+              <p style={{ fontSize: 12, color: "#7A7680" }}>Applying IJG branding, formatting data, rendering charts</p>
+              <p style={{ fontSize: 11, color: "#7A7680", marginTop: 12, opacity: 0.6 }}>This may take 15–30 seconds</p>
+              <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+            </div>
+          )}
+
+          {error && (
+            <div style={{ textAlign: "center", padding: "40px 0" }}>
+              <p style={{ fontSize: 14, color: "#E85A5A", marginBottom: 8 }}>Generation failed</p>
+              <p style={{ fontSize: 12, color: "#7A7680" }}>{error}</p>
+              <button
+                onClick={onClose}
+                style={{ marginTop: 16, padding: "8px 20px", borderRadius: 8, border: "1px solid rgba(196,154,42,0.2)", background: "transparent", color: "#C49A2A", fontSize: 12, cursor: "pointer", fontFamily: "inherit", fontWeight: 600 }}
+              >Close</button>
+            </div>
+          )}
+
+          {imageData && (
+            <>
+              <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,0.06)", marginBottom: 16 }}>
+                <img src={imageData} alt="Generated Infographic" style={{ width: "100%", display: "block" }} />
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button
+                  onClick={handleDownload}
+                  style={{
+                    flex: 1, padding: "12px", borderRadius: 10, border: "none",
+                    background: "linear-gradient(135deg,#C49A2A,#D4A843)",
+                    color: "#06070D", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "inherit",
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+                  }}
+                >
+                  <Download size={14} /> Download 4K Infographic
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PdfReportModal({ onClose, query, answer }: { onClose: () => void; query: string; answer: string }) {
+  const [generating, setGenerating] = useState(true);
+  const [pdfData, setPdfData] = useState<string | null>(null);
+  const [pdfTitle, setPdfTitle] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/generate-report", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, answer }),
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || "Report generation failed");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setPdfData(`data:application/pdf;base64,${data.pdf}`);
+        setPdfTitle(data.title || query);
+        setGenerating(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setGenerating(false);
+      });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleDownload = () => {
+    if (!pdfData) return;
+    const link = document.createElement("a");
+    link.href = pdfData;
+    link.download = `IJG_Report_${pdfTitle.replace(/[^a-zA-Z0-9]/g, "_").slice(0, 40)}.pdf`;
+    link.click();
+  };
+
+  return (
+    <div
+      style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 300, padding: 20 }}
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{ background: "#0D0E16", borderRadius: 20, width: "min(90vw, 800px)", maxHeight: "90vh", border: "1px solid rgba(255,255,255,0.06)", position: "relative", display: "flex", flexDirection: "column", overflow: "hidden" }}
+      >
+        <div style={{ height: 3, background: "linear-gradient(90deg,#C49A2A,#D4A843)", position: "absolute", top: 0, left: 0, right: 0, borderRadius: "20px 20px 0 0" }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px 16px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <FileText size={16} color="#C49A2A" />
+            <span style={{ fontSize: 13, fontWeight: 700, color: "#C49A2A", letterSpacing: "1px", textTransform: "uppercase" }}>PDF Report Generation</span>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "#7A7680", cursor: "pointer" }}><X size={18} /></button>
+        </div>
+
+        <div style={{ flex: 1, overflowY: "auto", padding: "0 24px 24px" }}>
+          {generating && (
+            <div style={{ textAlign: "center", padding: "60px 0" }}>
+              <Loader2 size={32} color="#C49A2A" style={{ animation: "spin 1s linear infinite", marginBottom: 16 }} />
+              <p style={{ fontSize: 14, color: "#E8E4DD", fontWeight: 600, marginBottom: 6 }}>Generating IJG-branded PDF Report...</p>
+              <p style={{ fontSize: 12, color: "#7A7680" }}>Structuring analysis, applying IJG template, formatting metrics</p>
+              <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+            </div>
+          )}
+
+          {error && (
+            <div style={{ textAlign: "center", padding: "40px 0" }}>
+              <p style={{ fontSize: 14, color: "#E85A5A", marginBottom: 8 }}>Generation failed</p>
+              <p style={{ fontSize: 12, color: "#7A7680" }}>{error}</p>
+              <button onClick={onClose} style={{ marginTop: 16, padding: "8px 20px", borderRadius: 8, border: "1px solid rgba(196,154,42,0.2)", background: "transparent", color: "#C49A2A", fontSize: 12, cursor: "pointer", fontFamily: "inherit", fontWeight: 600 }}>Close</button>
+            </div>
+          )}
+
+          {pdfData && (
+            <>
+              <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,0.06)", marginBottom: 16, background: "#fff" }}>
+                <iframe src={pdfData} style={{ width: "100%", height: 500, border: "none" }} title="PDF Preview" />
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button
+                  onClick={handleDownload}
+                  style={{
+                    flex: 1, padding: "12px", borderRadius: 10, border: "none",
+                    background: "linear-gradient(135deg,#C49A2A,#D4A843)",
+                    color: "#06070D", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "inherit",
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+                  }}
+                >
+                  <Download size={14} /> Download PDF Report
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const SECTION_LABELS: Record<string, string> = {
   home: "Home",
@@ -34,16 +239,7 @@ const SECTION_LABELS: Record<string, string> = {
   profile: "My Profile",
 };
 
-// Simulated AI answer for demo
-const DEMO_ANSWER = `Based on IJG's proprietary research database, Namibia's inflation trend over the last 5 years shows a gradual moderation from 4.5% in 2021 to 4.1% in February 2026.
-
-**Key findings:**
-- CPI peaked at 6.1% in mid-2022, driven by global supply chain disruptions and elevated fuel prices
-- The Bank of Namibia maintained a restrictive monetary stance through 2023-2024, with the repo rate reaching 7.75%
-- Housing and transport remain the largest contributors to the CPI basket
-- Food inflation has moderated significantly, dropping from 8.2% to 3.9% over the period
-
-The current trajectory suggests inflation will remain within the 3-6% target range through 2026, supporting expectations for gradual monetary easing.`;
+// AI answer is now fetched from /api/research-query (Anthropic Claude)
 
 export default function PortalLayout() {
   const [activeTab, setActiveTab] = useState("home");
@@ -60,35 +256,86 @@ export default function PortalLayout() {
   const [queryDone, setQueryDone] = useState(false);
   const [alertSet, setAlertSet] = useState(false);
   const [showDocGen, setShowDocGen] = useState(false);
+  const [showPdfGen, setShowPdfGen] = useState(false);
 
   const sectionLabel = SECTION_LABELS[activeTab] || "Home";
+  const abortRef = useRef<AbortController | null>(null);
 
-  // Simulated typing effect
-  const simulateTyping = useCallback((text: string) => {
-    setTypedAnswer("");
-    setQueryDone(false);
-    let i = 0;
-    const interval = setInterval(() => {
-      setTypedAnswer(text.slice(0, i + 1));
-      i++;
-      if (i >= text.length) {
-        clearInterval(interval);
-        setQueryDone(true);
-      }
-    }, 8);
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleQuerySubmit = useCallback(() => {
-    if (!query.trim() || isQuerying) return;
+  const handleQuerySubmit = useCallback(async (overrideQuery?: string) => {
+    const q = overrideQuery || query;
+    if (!q.trim() || isQuerying) return;
+    setQuery(q);
     setIsQuerying(true);
     setActiveTab("query");
-    // Simulate delay then typing
-    setTimeout(() => {
+    setTypedAnswer("");
+    setQueryDone(false);
+
+    // Abort any in-flight request
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    try {
+      const res = await fetch("/api/research-query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: q }),
+        signal: controller.signal,
+      });
+
+      if (!res.ok || !res.body) {
+        setIsQuerying(false);
+        setTypedAnswer("Sorry, an error occurred. Please try again.");
+        setQueryDone(true);
+        return;
+      }
+
       setIsQuerying(false);
-      simulateTyping(DEMO_ANSWER);
-    }, 1500);
-  }, [query, isQuerying, simulateTyping]);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let fullText = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          const payload = line.slice(6).trim();
+          if (payload === "[DONE]") {
+            setQueryDone(true);
+            break;
+          }
+          try {
+            const parsed = JSON.parse(payload);
+            if (parsed.text) {
+              fullText += parsed.text;
+              setTypedAnswer(fullText);
+            }
+          } catch {
+            // skip malformed chunks
+          }
+        }
+      }
+
+      if (!fullText) {
+        setTypedAnswer("No response received. Please try a different query.");
+      }
+      setQueryDone(true);
+    } catch (err) {
+      if ((err as Error).name !== "AbortError") {
+        setIsQuerying(false);
+        setTypedAnswer("Sorry, an error occurred. Please try again.");
+        setQueryDone(true);
+      }
+    }
+  }, [query, isQuerying]);
 
   const handleReadArticle = useCallback((article: { id: number }) => {
     router.push(`/research/${article.id}`);
@@ -163,6 +410,7 @@ export default function PortalLayout() {
                 alertSet={alertSet}
                 onSetAlert={() => setAlertSet(true)}
                 onShowDocGen={() => setShowDocGen(true)}
+                onShowPdfGen={() => setShowPdfGen(true)}
               />
             )}
             {activeTab === "trading" && (
@@ -198,6 +446,20 @@ export default function PortalLayout() {
           </div>
         </main>
       </div>
+      {showDocGen && (
+        <InfographicModal
+          onClose={() => setShowDocGen(false)}
+          query={query}
+          answer={typedAnswer}
+        />
+      )}
+      {showPdfGen && (
+        <PdfReportModal
+          onClose={() => setShowPdfGen(false)}
+          query={query}
+          answer={typedAnswer}
+        />
+      )}
     </div>
   );
 }

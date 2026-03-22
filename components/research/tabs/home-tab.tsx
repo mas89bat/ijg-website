@@ -9,7 +9,7 @@ export interface HomeTabProps {
   language: Language;
   query: string;
   onQueryChange: (value: string) => void;
-  onQuerySubmit: () => void;
+  onQuerySubmit: (q?: string) => void;
   onSwitchToQuery: () => void;
   onSwitchToTrading?: () => void;
   onSwitchToAdvisory?: () => void;
@@ -132,8 +132,8 @@ export function HomeTab({
           }}>{t.query_btn}</button>
         </div>
         <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
-          {["Namibia inflation trend", "Uranium market outlook", "Bank Windhoek results", "BoN MPC preview"].map(q => (
-            <button key={q} onClick={() => { onQueryChange(q); onSwitchToQuery(); setTimeout(onQuerySubmit, 50); }} style={{
+          {["SNO FY25 results summary", "SNO vs peers comparison", "SNO dividend dates", "Namibian banking outlook"].map(q => (
+            <button key={q} onClick={() => { onSwitchToQuery(); onQuerySubmit(q); }} style={{
               padding: "5px 12px", borderRadius: 99, border: "1px solid rgba(255,255,255,0.08)",
               background: "transparent", color: "#7A7680", fontSize: 11, cursor: "pointer", fontFamily: "inherit",
               transition: "all 0.15s",

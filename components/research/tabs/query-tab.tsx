@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 import { Sparkles, Check, FileText, BarChart3, MonitorPlay, MessageCircle, Bell, History, ChevronDown, ChevronUp, Bookmark, Trash2, FolderOpen, Image, Headphones, Table2, ExternalLink } from "lucide-react";
 import { Language, TRANSLATIONS } from "@/lib/research-data";
 import { useIsMobile } from "@/hooks/use-is-mobile";
@@ -38,13 +39,14 @@ export interface QueryTabProps {
   language: Language;
   query: string;
   onQueryChange: (value: string) => void;
-  onQuerySubmit: () => void;
+  onQuerySubmit: (q?: string) => void;
   isQuerying: boolean;
   typedAnswer: string;
   queryDone: boolean;
   alertSet: boolean;
   onSetAlert: () => void;
   onShowDocGen: () => void;
+  onShowPdfGen?: () => void;
 }
 
 export function QueryTab({
@@ -58,6 +60,7 @@ export function QueryTab({
   alertSet,
   onSetAlert,
   onShowDocGen,
+  onShowPdfGen,
 }: QueryTabProps) {
   const t = TRANSLATIONS[language];
   const isMobile = useIsMobile();
@@ -267,7 +270,7 @@ export function QueryTab({
           placeholder={t.query_placeholder}
           style={{ flex: 1, padding: "15px 20px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)", background: "#0D0E16", color: "#E8E4DD", fontSize: 15, fontFamily: "inherit", outline: "none" }}
         />
-        <button onClick={onQuerySubmit} style={{
+        <button onClick={() => onQuerySubmit()} style={{
           padding: isMobile ? "14px 28px" : "0 28px", borderRadius: 12, border: "none",
           background: isQuerying ? "#1A1A2E" : "linear-gradient(135deg,#C49A2A,#D4A843)",
           color: isQuerying ? "#7A7680" : "#06070D",
@@ -307,16 +310,16 @@ export function QueryTab({
             <span style={{ fontSize: 12, fontWeight: 700, color: "#C49A2A", letterSpacing: "1px", textTransform: "uppercase" }}>IJG Intelligence</span>
             <span style={{ marginLeft: "auto", fontSize: 11, padding: "3px 10px", borderRadius: 99, background: "rgba(46,204,113,0.12)", color: "#2ECC71", fontWeight: 700 }}>94% confidence</span>
           </div>
-          <p style={{ fontSize: 15, lineHeight: 1.8, color: "rgba(232,228,221,0.85)" }}>
-            {typedAnswer}
+          <div style={{ fontSize: 15, lineHeight: 1.8, color: "rgba(232,228,221,0.85)" }} className="ai-response-markdown">
+            <ReactMarkdown>{typedAnswer}</ReactMarkdown>
             {!queryDone && <span className="typewriter-cursor" />}
-          </p>
+          </div>
 
           {queryDone && (
             <>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 20, paddingTop: 16, borderTop: "1px solid rgba(255,255,255,0.04)" }}>
                 {[
-                  { label: "PDF Report", Icon: FileText, color: "#C9A84C", borderColor: "rgba(196,154,42,0.2)", bg: "rgba(196,154,42,0.06)", onClick: onShowDocGen },
+                  { label: "PDF Report", Icon: FileText, color: "#C9A84C", borderColor: "rgba(196,154,42,0.2)", bg: "rgba(196,154,42,0.06)", onClick: onShowPdfGen },
                   { label: "Infographic", Icon: BarChart3, color: "#C9A84C", borderColor: "rgba(196,154,42,0.2)", bg: "rgba(196,154,42,0.06)", onClick: onShowDocGen },
                   { label: "Presentation", Icon: MonitorPlay, color: "#C9A84C", borderColor: "rgba(196,154,42,0.2)", bg: "rgba(196,154,42,0.06)", onClick: onShowDocGen },
                   { label: "WhatsApp", Icon: MessageCircle, color: "#25D366", borderColor: "rgba(37,211,102,0.2)", bg: "rgba(37,211,102,0.06)", onClick: undefined },
@@ -354,14 +357,14 @@ export function QueryTab({
           <p style={{ fontSize: 12, color: "#7A7680", fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 12 }}>Suggested queries</p>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 8 }}>
             {[
-              "What was Namibia's inflation trend over the last 5 years?",
-              "Uranium market outlook and impact on Namibia",
-              "Bank Windhoek FY2025 results summary",
-              "BoN MPC March 2026 preview",
-              "NSX top performers this week",
-              "Capricorn Group fair value estimate",
+              "Summarise SNO's FY25 results — what drove profit growth?",
+              "How does SNO compare to FirstRand Namibia and Capricorn Group?",
+              "What is SNO's dividend for FY25 and when is the payment date?",
+              "What drove the 18% growth in SNO's loan book?",
+              "What is SNO's outlook and strategic investment phase?",
+              "What are the key risks facing Namibian banks in 2026?",
             ].map((q, i) => (
-              <button key={i} onClick={() => { onQueryChange(q); setTimeout(onQuerySubmit, 50); }} style={{
+              <button key={i} onClick={() => { onQueryChange(q); onQuerySubmit(q); }} style={{
                 padding: "12px 16px", borderRadius: 10,
                 border: "1px solid rgba(255,255,255,0.04)",
                 background: "#0D0E16", color: "rgba(232,228,221,0.7)",

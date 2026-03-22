@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, ReactNode } from "react";
+import { useState, useEffect, useRef, ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { Article, Language, TRANSLATIONS, RESEARCH, IJG_LOGO, AI_ANSWERS, INFOGRAPHIC_IMG } from "@/lib/research-data";
+import { Article, Language, TRANSLATIONS, RESEARCH, IJG_LOGO, INFOGRAPHIC_IMG } from "@/lib/research-data";
 import LanguageToggle from "./language-toggle";
 import { MessageCircle, Bell, FileText, BarChart3, MonitorPlay, Mail, Gift, X, Download, Sparkles, ArrowRight, Check, Home, Hexagon, LayoutGrid } from "lucide-react";
 
@@ -168,28 +168,82 @@ export function AppShell() {
     router.push(`/research/${article.id}`);
   };
 
-  const handleQuery = () => {
-    if (!query.trim()) return;
-    setLastQuery(query);
+  const abortRef = useRef<AbortController | null>(null);
+
+  const handleQuery = async (overrideQuery?: string) => {
+    const q = overrideQuery || query;
+    if (!q.trim()) return;
+    setQuery(q);
+    setLastQuery(q);
     setIsQuerying(true);
     setTypedAnswer("");
     setQueryDone(false);
 
-    setTimeout(() => {
-      setIsQuerying(false);
-      const lower = query.toLowerCase();
-      let result = AI_ANSWERS.default;
-      if (lower.includes("inflation") || lower.includes("cpi")) result = AI_ANSWERS.inflation;
-      else if (lower.includes("uranium") || lower.includes("mining") || lower.includes("paladin")) result = AI_ANSWERS.uranium;
-      else if (lower.includes("bank") || lower.includes("windhoek") || lower.includes("capricorn")) result = AI_ANSWERS.bank;
+    // Abort any in-flight request
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
 
-      const answer = result.answer + ` [Sources: ${result.citations.map(c => `[${c}]`).join(", ")}]`;
-      let i = 0;
-      const iv = setInterval(() => {
-        setTypedAnswer(answer.slice(0, ++i));
-        if (i >= answer.length) { clearInterval(iv); setQueryDone(true); }
-      }, 12);
-    }, 2200);
+    try {
+      const res = await fetch("/api/research-query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: q }),
+        signal: controller.signal,
+      });
+
+      if (!res.ok || !res.body) {
+        setIsQuerying(false);
+        setTypedAnswer("Sorry, an error occurred. Please try again.");
+        setQueryDone(true);
+        return;
+      }
+
+      setIsQuerying(false);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let fullText = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          const payload = line.slice(6).trim();
+          if (payload === "[DONE]") {
+            setQueryDone(true);
+            break;
+          }
+          try {
+            const parsed = JSON.parse(payload);
+            if (parsed.text) {
+              fullText += parsed.text;
+              setTypedAnswer(fullText);
+            }
+          } catch {
+            // skip malformed chunks
+          }
+        }
+      }
+
+      if (!fullText) {
+        setTypedAnswer("No response received. Please try a different query.");
+      }
+      setQueryDone(true);
+    } catch (err) {
+      if ((err as Error).name !== "AbortError") {
+        setIsQuerying(false);
+        setTypedAnswer("Sorry, an error occurred. Please try again.");
+        setQueryDone(true);
+      }
+    }
   };
 
   const tabs: { id: AppTab; label: string; icon: ReactNode }[] = [
@@ -248,8 +302,8 @@ export function AppShell() {
                 }}>{t.query_btn}</button>
               </div>
               <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
-                {["Namibia inflation trend", "Uranium market outlook", "Bank Windhoek results", "BoN MPC preview"].map(q => (
-                  <button key={q} onClick={() => { setQuery(q); setActiveTab("query"); setTimeout(handleQuery, 50); }} style={{
+                {["SNO FY25 results summary", "SNO vs peers comparison", "SNO dividend dates", "Namibian banking outlook"].map(q => (
+                  <button key={q} onClick={() => { setActiveTab("query"); handleQuery(q); }} style={{
                     padding: "5px 12px", borderRadius: 99, border: "1px solid rgba(255,255,255,0.08)",
                     background: "transparent", color: "#7A7680", fontSize: 11, cursor: "pointer", fontFamily: "inherit",
                     transition: "all 0.15s",
@@ -306,7 +360,7 @@ export function AppShell() {
                 placeholder={t.query_placeholder}
                 style={{ flex: 1, padding: "15px 20px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)", background: "#0D0E16", color: "#E8E4DD", fontSize: 15, fontFamily: "inherit", outline: "none" }}
               />
-              <button onClick={handleQuery} style={{
+              <button onClick={() => handleQuery()} style={{
                 padding: "0 28px", borderRadius: 12, border: "none",
                 background: isQuerying ? "#1A1A2E" : "linear-gradient(135deg,#C49A2A,#D4A843)",
                 color: isQuerying ? "#7A7680" : "#06070D",
@@ -380,14 +434,14 @@ export function AppShell() {
                 <p style={{ fontSize: 12, color: "#7A7680", fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 12 }}>Suggested queries</p>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                   {[
-                    "What was Namibia's inflation trend over the last 5 years?",
-                    "Uranium market outlook and impact on Namibia",
-                    "Bank Windhoek FY2025 results summary",
-                    "BoN MPC March 2026 preview",
-                    "NSX top performers this week",
-                    "Capricorn Group fair value estimate",
+                    "Summarise SNO's FY25 results — what drove profit growth?",
+                    "How does SNO compare to FirstRand Namibia and Capricorn Group?",
+                    "What is SNO's dividend for FY25 and when is the payment date?",
+                    "What drove the 18% growth in SNO's loan book?",
+                    "What is SNO's outlook and strategic investment phase?",
+                    "What are the key risks facing Namibian banks in 2026?",
                   ].map((q, i) => (
-                    <button key={i} onClick={() => { setQuery(q); setTimeout(handleQuery, 50); }} style={{
+                    <button key={i} onClick={() => { handleQuery(q); }} style={{
                       padding: "12px 16px", borderRadius: 10,
                       border: "1px solid rgba(255,255,255,0.04)",
                       background: "#0D0E16", color: "rgba(232,228,221,0.7)",

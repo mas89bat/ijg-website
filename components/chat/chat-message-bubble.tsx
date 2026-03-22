@@ -8,16 +8,28 @@ export function ChatMessageBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === "user";
 
   return (
-    <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+    <div style={{ display: "flex", justifyContent: isUser ? "flex-end" : "flex-start" }}>
       <div
-        className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-          isUser
-            ? "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground rounded-br-md"
-            : "bg-[var(--chat-bubble)] text-[#e2e8f0] rounded-bl-md"
-        }`}
+        style={{
+          maxWidth: "85%",
+          borderRadius: isUser ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+          padding: "12px 16px",
+          fontSize: 14,
+          lineHeight: 1.6,
+          fontFamily: "'DM Sans', sans-serif",
+          ...(isUser
+            ? {
+                background: "linear-gradient(135deg, #C49A2A, #D4A843)",
+                color: "#07090F",
+              }
+            : {
+                background: "rgba(26,35,64,0.6)",
+                color: "#E2E8F0",
+              }),
+        }}
       >
         {isUser ? (
-          <p>{message.content}</p>
+          <p style={{ margin: 0 }}>{message.content}</p>
         ) : (
           <ReactMarkdown
             components={{
@@ -29,7 +41,21 @@ export function ChatMessageBubble({ message }: { message: ChatMessage }) {
                         const el = document.getElementById("prospect-form");
                         el?.scrollIntoView({ behavior: "smooth", block: "start" });
                       }}
-                      className="mt-2 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:scale-[1.02] hover:shadow-[0_0_20px_oklch(0.55_0.20_250/30%)]"
+                      style={{
+                        marginTop: 8,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 8,
+                        borderRadius: 8,
+                        background: "linear-gradient(135deg, #C49A2A, #D4A843)",
+                        padding: "8px 16px",
+                        fontSize: 14,
+                        fontWeight: 600,
+                        color: "#07090F",
+                        border: "none",
+                        cursor: "pointer",
+                        fontFamily: "'DM Sans', sans-serif",
+                      }}
                     >
                       {children}
                     </button>
@@ -39,7 +65,12 @@ export function ChatMessageBubble({ message }: { message: ChatMessage }) {
                   return (
                     <Link
                       href={href}
-                      className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
+                      style={{
+                        fontWeight: 500,
+                        color: "#C9A84C",
+                        textDecoration: "underline",
+                        textUnderlineOffset: 2,
+                      }}
                     >
                       {children}
                     </Link>
@@ -50,23 +81,28 @@ export function ChatMessageBubble({ message }: { message: ChatMessage }) {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
+                    style={{
+                      fontWeight: 500,
+                      color: "#C9A84C",
+                      textDecoration: "underline",
+                      textUnderlineOffset: 2,
+                    }}
                   >
                     {children}
                   </a>
                 );
               },
               p({ children }) {
-                return <p className="mb-2 last:mb-0">{children}</p>;
+                return <p style={{ marginBottom: 8 }}>{children}</p>;
               },
               ul({ children }) {
-                return <ul className="mb-2 ml-4 list-disc space-y-1">{children}</ul>;
+                return <ul style={{ marginBottom: 8, marginLeft: 16, listStyleType: "disc" }}>{children}</ul>;
               },
               ol({ children }) {
-                return <ol className="mb-2 ml-4 list-decimal space-y-1">{children}</ol>;
+                return <ol style={{ marginBottom: 8, marginLeft: 16, listStyleType: "decimal" }}>{children}</ol>;
               },
               strong({ children }) {
-                return <strong className="font-semibold text-foreground">{children}</strong>;
+                return <strong style={{ fontWeight: 600, color: "#F5F0E8" }}>{children}</strong>;
               },
             }}
           >

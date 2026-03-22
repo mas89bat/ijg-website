@@ -32,7 +32,12 @@ export function ChatInput() {
   };
 
   return (
-    <div className="flex items-end gap-2 border-t border-white/[0.06] bg-[var(--chat-header)] p-3">
+    <div style={{
+      display: "flex", alignItems: "flex-end", gap: 8,
+      borderTop: "1px solid rgba(255,255,255,0.06)",
+      background: "#0D1117",
+      padding: 12,
+    }}>
       <textarea
         ref={textareaRef}
         value={value}
@@ -43,12 +48,34 @@ export function ChatInput() {
         onKeyDown={handleKeyDown}
         placeholder="Ask about investing in Namibia…"
         rows={1}
-        className="flex-1 resize-none rounded-xl bg-[var(--chat-bubble)] px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/40"
+        style={{
+          flex: 1, resize: "none",
+          borderRadius: 12,
+          background: "rgba(26,35,64,0.5)",
+          border: "1px solid rgba(255,255,255,0.06)",
+          padding: "10px 16px",
+          fontSize: 14,
+          color: "#F5F0E8",
+          fontFamily: "'DM Sans', sans-serif",
+          outline: "none",
+        }}
+        onFocus={e => { e.currentTarget.style.borderColor = "rgba(201,168,76,0.4)"; }}
+        onBlur={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; }}
       />
       <button
         onClick={handleSubmit}
         disabled={!value.trim() || isLoading}
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-all hover:scale-105 hover:shadow-[0_0_20px_oklch(0.55_0.20_250/30%)] disabled:opacity-40 disabled:hover:scale-100"
+        style={{
+          display: "flex", alignItems: "center", justifyContent: "center",
+          height: 40, width: 40, flexShrink: 0,
+          borderRadius: "50%",
+          background: (!value.trim() || isLoading) ? "rgba(201,168,76,0.3)" : "linear-gradient(135deg, #C49A2A, #D4A843)",
+          border: "none",
+          color: "#07090F",
+          cursor: (!value.trim() || isLoading) ? "not-allowed" : "pointer",
+          transition: "all 0.2s",
+          opacity: (!value.trim() || isLoading) ? 0.4 : 1,
+        }}
       >
         <Send size={18} />
       </button>

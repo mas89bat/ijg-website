@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { ChatProvider } from "@/components/chat/chat-context";
 import { ChatLauncher } from "@/components/chat/chat-launcher";
 import { ChatPanel } from "@/components/chat/chat-panel";
+import { LanguageProvider } from "@/contexts/language-context";
+import { AuthProvider } from "@/contexts/auth-context";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -59,11 +61,15 @@ export default function RootLayout({
           forcedTheme="dark"
           disableTransitionOnChange
         >
-          <ChatProvider>
-            {children}
-            <ChatLauncher />
-            <ChatPanel />
-          </ChatProvider>
+          <LanguageProvider>
+            <AuthProvider>
+              <ChatProvider>
+                {children}
+                <ChatLauncher />
+                <ChatPanel />
+              </ChatProvider>
+            </AuthProvider>
+          </LanguageProvider>
           <Toaster />
         </ThemeProvider>
       </body>

@@ -57,10 +57,17 @@ export const TRUST_METRICS: TrustMetric[] = [
 
 export const NAV_ITEMS: NavItem[] = [
   { title: "Our Services", href: "/services" },
+  { title: "Wealth", href: "/wealth" },
   { title: "Research", href: "/research" },
   { title: "About", href: "/about" },
   { title: "Contact", href: "/contact" },
 ];
+
+export const SOCIAL_LINKS = [
+  { platform: "LinkedIn", url: "https://www.linkedin.com/company/ijg/", icon: "Linkedin" },
+  { platform: "Facebook", url: "https://web.facebook.com/ijgnamibia/", icon: "Facebook" },
+  { platform: "X", url: "https://x.com/ijg_research", icon: "Twitter" },
+] as const;
 
 export const RESEARCH_ARTICLES: ResearchArticle[] = [
   {
@@ -128,7 +135,7 @@ export const COMPANY_INFO = {
   email: "info@ijg.net",
   portalUrl: "https://ijgwealth.myfinance-hub.co.za/login/",
   unitTrustUrl: "https://www.ijgunittrusts.net/",
-  researchUrl: "https://ijgresearch.net/",
+  researchUrl: "/research",
   regulatory:
     "IJG Securities (Pty) Ltd is an authorised financial services provider regulated by NAMFISA.",
 };

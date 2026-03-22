@@ -203,3 +203,515 @@
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   IJG Wealth Planning — Custom Classes
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Animations ── */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes wealth-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.85); }
+}
+
+.fade-in-up     { animation: fade-in-up 0.55s ease both; }
+.fade-in        { animation: fade-in    0.4s  ease both; }
+.delay-1 { animation-delay: 0.10s; }
+.delay-2 { animation-delay: 0.20s; }
+.delay-3 { animation-delay: 0.30s; }
+.delay-4 { animation-delay: 0.40s; }
+.delay-5 { animation-delay: 0.50s; }
+
+/* ── Gold shimmer text ── */
+.gold-text {
+  background: linear-gradient(90deg, oklch(0.72 0.12 75) 0%, oklch(0.88 0.14 75) 40%, oklch(0.72 0.12 75) 60%, oklch(0.88 0.14 75) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: wealth-shimmer 5s linear infinite;
+}
+
+/* ── Number input ── */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; }
+
+/* ── Wealth Form inputs — high quality, mobile-friendly ── */
+.ijg-input {
+  width: 100%;
+  background: rgba(15, 22, 48, 0.85);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 13px 16px;
+  color: #EDE8DF;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  line-height: 1.4;
+}
+
+.ijg-input:focus {
+  border-color: oklch(0.72 0.12 75);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+}
+
+.ijg-select {
+  width: 100%;
+  background: rgba(15, 22, 48, 0.85);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 13px 44px 13px 16px;
+  color: #EDE8DF;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='rgba(237,232,223,0.45)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  box-sizing: border-box;
+}
+
+.ijg-select:focus {
+  border-color: oklch(0.72 0.12 75);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+}
+
+.ijg-select option {
+  background: #0D1830;
+  color: #EDE8DF;
+}
+
+/* ── Field label ── */
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(237,232,223,0.5);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+
+.field-hint {
+  font-size: 11px;
+  color: rgba(237,232,223,0.32);
+  margin-top: 5px;
+  line-height: 1.5;
+}
+
+/* ── Wealth Primary button ── */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: oklch(0.72 0.12 75);
+  color: #0A0E1A;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 15px 24px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.1px;
+  min-height: 52px;
+}
+
+.btn-primary:hover {
+  background: oklch(0.82 0.12 75);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(201,168,76,0.3);
+}
+
+.btn-primary:active { transform: translateY(0); }
+
+/* ── WhatsApp button ── */
+.btn-wa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #25D366;
+  color: #fff;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 15px 24px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(37,211,102,0.2);
+  min-height: 52px;
+  box-sizing: border-box;
+}
+
+.btn-wa:hover {
+  background: #20c05a;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(37,211,102,0.35);
+}
+
+/* ── Wealth Responsive layout classes ── */
+
+/* Context: editorial + IJG View sidebar */
+.context-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Charts: 1 col mobile, 2 col desktop */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+/* Calculator: stacked mobile, side-by-side desktop */
+.calc-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+/* Product cards */
+.products-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+/* Stats bar */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+/* Trust section */
+.trust-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+.trust-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Footer */
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+/* ── Tablet >= 640px ── */
+@media (min-width: 640px) {
+  .products-grid { grid-template-columns: repeat(2, 1fr); }
+  .stats-bar { grid-template-columns: repeat(4, 1fr); }
+  .charts-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Desktop >= 1024px ── */
+@media (min-width: 1024px) {
+  .context-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+  }
+  .calc-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+  }
+  .products-grid { grid-template-columns: repeat(3, 1fr); }
+  .trust-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+  .footer-grid {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+/* ── Large desktop >= 1280px ── */
+@media (min-width: 1280px) {
+  .products-grid { grid-template-columns: repeat(5, 1fr); }
+}
+
+/* ── Nav visibility ── */
+@media (min-width: 769px) { .nav-mobile { display: none !important; } }
+@media (max-width: 768px) { .nav-desktop { display: none !important; } }
+
+/* ── Tab bar hide scrollbar ── */
+.tab-bar::-webkit-scrollbar { display: none; }
+.tab-bar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Result row ── */
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 18px;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.result-row:last-child { border-bottom: none; }
+
+.result-label {
+  font-size: 13px;
+  color: rgba(237,232,223,0.6);
+  line-height: 1.4;
+  flex: 1;
+  min-width: 0;
+}
+
+.result-value {
+  font-size: 15px;
+  font-weight: 500;
+  color: #EDE8DF;
+  text-align: right;
+  flex-shrink: 0;
+  max-width: 55%;
+}
+
+.result-value.highlight {
+  font-size: 17px;
+  font-weight: 700;
+  color: oklch(0.72 0.12 75);
+}
+
+.result-row.highlighted {
+  background: rgba(201,168,76,0.06);
+}
+
+/* ── IJG View card ── */
+.ijg-view-card {
+  background: linear-gradient(135deg, rgba(26,35,64,0.95) 0%, rgba(15,20,45,0.95) 100%);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+/* ── Recommendation badge ── */
+.reco-card {
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+/* ── Chart card ── */
+.chart-card {
+  background: rgba(26,35,64,0.5);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 20px 16px 16px;
+}
+
+/* ── Section padding ── */
+.section-pad {
+  padding: 64px var(--page-pad, 20px);
+}
+
+@media (min-width: 640px) {
+  .section-pad { padding: 80px 24px; }
+}
+
+@media (min-width: 1024px) {
+  .section-pad { padding: 96px 32px; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   IJG Research Platform — Custom Classes
+   ══════════════════════════════════════════════════════════════ */
+
+@keyframes pulse-dot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+.pulse-dot-1 { animation: pulse-dot 1.2s ease-in-out infinite; }
+.pulse-dot-2 { animation: pulse-dot 1.2s ease-in-out 0.2s infinite; }
+.pulse-dot-3 { animation: pulse-dot 1.2s ease-in-out 0.4s infinite; }
+
+@keyframes typewriter-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.typewriter-cursor::after {
+  content: "\25CB";
+  display: inline-block;
+  animation: typewriter-blink 0.8s step-end infinite;
+  color: #C49A2A;
+  font-size: 0.85em;
+  margin-left: 2px;
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  background: rgba(6, 7, 13, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+/* Research scrollbar styling */
+.research-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.research-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.research-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+}
+.research-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Research input focus glow */
+.research-input:focus {
+  border-color: rgba(196, 154, 42, 0.4) !important;
+  box-shadow: 0 0 0 3px rgba(196, 154, 42, 0.08);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   IJG Upstream Design System — Homepage Sections
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  --ijg-black:   #07090F;
+  --ijg-navy:    #0D1117;
+  --ijg-card:    #111827;
+  --ijg-border:  #1F2937;
+  --ijg-gold:    #C9A84C;
+  --ijg-gold-lt: #E2C97E;
+  --ijg-white:   #F5F0E8;
+  --ijg-muted:   #9CA3AF;
+  --ijg-green:   #10B981;
+  --ijg-red:     #EF4444;
+}
+
+html { scroll-behavior: smooth; }
+
+.hero-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: #1F2937;
+  border: 1px solid #1F2937;
+  border-radius: 12px;
+  overflow: hidden;
+}
+@media (min-width: 640px) {
+  .hero-stats-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.ijg-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .ijg-container { padding: 0 2rem; }
+}
+
+.section-label {
+  display: inline-block;
+  font-family: 'DM Sans', sans-serif;
+  font-style: normal;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ijg-gold);
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 4px;
+  padding: 0.2rem 0.6rem;
+}
+
+.ijg-card {
+  background: var(--ijg-card);
+  border: 1px solid var(--ijg-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.ijg-card:hover {
+  border-color: rgba(201,168,76,0.4);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: var(--ijg-white);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 6px;
+  border: 1px solid rgba(245,240,232,0.25);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-outline:hover {
+  border-color: var(--ijg-gold);
+  color: var(--ijg-gold);
+}
+
+.gold-divider {
+  width: 48px;
+  height: 2px;
+  background: var(--ijg-gold);
+  margin: 1rem 0;
+}
+
+/* Upstream scrollbar styles */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--ijg-navy, #0D1117); }
+::-webkit-scrollbar-thumb { background: var(--ijg-border, #1F2937); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ijg-gold, #C9A84C); }

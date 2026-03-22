@@ -76,7 +76,7 @@ export function HeroSection() {
                 <span className="ml-2 transition-transform group-hover:translate-x-0.5">&rarr;</span>
               </Link>
               <Link
-                href="#research"
+                href="/research"
                 className="glass inline-flex h-11 items-center justify-center rounded-xl px-6 text-sm font-semibold text-foreground transition-all hover:scale-[1.02] hover:bg-white/[0.08]"
               >
                 View Our Research

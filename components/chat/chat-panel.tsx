@@ -18,12 +18,20 @@ const SUGGESTED_PROMPTS = [
 
 function TypingIndicator() {
   return (
-    <div className="flex justify-start">
-      <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-md bg-[var(--chat-bubble)] px-4 py-3">
+    <div style={{ display: "flex", justifyContent: "flex-start" }}>
+      <div style={{
+        display: "flex", alignItems: "center", gap: 6,
+        borderRadius: "16px 16px 16px 4px",
+        background: "rgba(26,35,64,0.6)",
+        padding: "12px 16px",
+      }}>
         {[0, 1, 2].map((i) => (
           <motion.span
             key={i}
-            className="h-2 w-2 rounded-full bg-primary/60"
+            style={{
+              height: 8, width: 8, borderRadius: "50%",
+              background: "rgba(201,168,76,0.6)",
+            }}
             animate={{ y: [0, -6, 0] }}
             transition={{
               duration: 0.6,
@@ -58,7 +66,11 @@ export function ChatPanel() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/50 md:hidden"
+            style={{
+              position: "fixed", inset: 0, zIndex: 50,
+              background: "rgba(0,0,0,0.5)",
+            }}
+            className="md:hidden"
             onClick={closeChat}
           />
 
@@ -67,33 +79,69 @@ export function ChatPanel() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l border-white/[0.06] bg-[var(--chat-bg)] shadow-2xl md:w-[420px]"
+            style={{
+              position: "fixed", top: 0, right: 0, bottom: 0,
+              zIndex: 50, display: "flex", flexDirection: "column",
+              width: "100%", maxWidth: 420,
+              borderLeft: "1px solid rgba(255,255,255,0.06)",
+              background: "#07090F",
+              boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)",
+              fontFamily: "'DM Sans', sans-serif",
+            }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-white/[0.06] bg-[var(--chat-header)] px-4 py-3">
-              <div className="flex items-center gap-3">
+            <div style={{
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              borderBottom: "1px solid rgba(255,255,255,0.06)",
+              background: "#0D1117",
+              padding: "12px 16px",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <Image
                   src="/ijg-logo.png"
                   alt="IJG Securities"
                   width={65}
                   height={30}
-                  className="object-contain"
+                  style={{ objectFit: "contain" }}
                 />
-                <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                <span style={{
+                  borderRadius: 99,
+                  background: "rgba(201,168,76,0.15)",
+                  padding: "2px 10px",
+                  fontSize: 10, fontWeight: 700,
+                  color: "#C9A84C",
+                  letterSpacing: "0.5px",
+                }}>
                   Assistant
                 </span>
               </div>
-              <div className="flex items-center gap-1">
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                 <button
                   onClick={resetChat}
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-white/[0.06] hover:text-foreground"
+                  style={{
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    height: 32, width: 32, borderRadius: "50%",
+                    background: "none", border: "none",
+                    color: "rgba(237,232,223,0.5)", cursor: "pointer",
+                    transition: "all 0.2s",
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "#F5F0E8"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "rgba(237,232,223,0.5)"; }}
                   aria-label="Reset chat"
                 >
                   <RotateCcw size={15} />
                 </button>
                 <button
                   onClick={closeChat}
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-white/[0.06] hover:text-foreground"
+                  style={{
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    height: 32, width: 32, borderRadius: "50%",
+                    background: "none", border: "none",
+                    color: "rgba(237,232,223,0.5)", cursor: "pointer",
+                    transition: "all 0.2s",
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "#F5F0E8"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "rgba(237,232,223,0.5)"; }}
                   aria-label="Close chat"
                 >
                   <X size={16} />
@@ -102,8 +150,12 @@ export function ChatPanel() {
             </div>
 
             {/* Subtitle */}
-            <div className="border-b border-white/[0.04] bg-[var(--chat-header)] px-4 py-2">
-              <p className="text-xs text-muted-foreground">
+            <div style={{
+              borderBottom: "1px solid rgba(255,255,255,0.04)",
+              background: "#0D1117",
+              padding: "8px 16px",
+            }}>
+              <p style={{ fontSize: 12, color: "rgba(237,232,223,0.45)", margin: 0 }}>
                 Your Namibian financial guide
               </p>
             </div>
@@ -111,7 +163,11 @@ export function ChatPanel() {
             {/* Messages */}
             <div
               ref={scrollRef}
-              className="flex-1 space-y-3 overflow-y-auto px-4 py-4"
+              style={{
+                flex: 1, overflowY: "auto",
+                padding: 16, display: "flex",
+                flexDirection: "column", gap: 12,
+              }}
             >
               {messages.map((msg) => (
                 <ChatMessageBubble key={msg.id} message={msg} />
@@ -124,12 +180,32 @@ export function ChatPanel() {
 
               {/* Suggested prompts */}
               {showSuggestions && (
-                <div className="flex flex-wrap gap-2 pt-2">
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, paddingTop: 8 }}>
                   {SUGGESTED_PROMPTS.map((prompt) => (
                     <button
                       key={prompt}
                       onClick={() => sendMessage(prompt)}
-                      className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-xs text-muted-foreground transition-all hover:border-primary/40 hover:bg-primary/10 hover:text-foreground"
+                      style={{
+                        borderRadius: 99,
+                        border: "1px solid rgba(201,168,76,0.2)",
+                        background: "rgba(201,168,76,0.05)",
+                        padding: "6px 12px",
+                        fontSize: 12,
+                        color: "rgba(237,232,223,0.6)",
+                        cursor: "pointer",
+                        fontFamily: "'DM Sans', sans-serif",
+                        transition: "all 0.2s",
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.borderColor = "rgba(201,168,76,0.4)";
+                        e.currentTarget.style.background = "rgba(201,168,76,0.1)";
+                        e.currentTarget.style.color = "#F5F0E8";
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.borderColor = "rgba(201,168,76,0.2)";
+                        e.currentTarget.style.background = "rgba(201,168,76,0.05)";
+                        e.currentTarget.style.color = "rgba(237,232,223,0.6)";
+                      }}
                     >
                       {prompt}
                     </button>
